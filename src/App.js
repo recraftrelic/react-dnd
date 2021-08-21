@@ -1,28 +1,7 @@
 import { closestCenter, DndContext, PointerSensor, useSensor } from '@dnd-kit/core';
-import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import { useState } from 'react';
-import './App.css';
-
-function SortableComponent ({
-  id,
-  name
-}) {
-  const {
-    setNodeRef,
-    attributes,
-    listeners,
-    transition,
-    transform,
-  } = useSortable({ id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition
-  }
-
-  return <p style={style} ref={setNodeRef} {...attributes} {...listeners}>{name}</p>
-}
+import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import React, { useState } from 'react';
+import UserComponent from './UserComponent';
 
 function App() {
   const [items, setItems] = useState([
@@ -33,26 +12,42 @@ function App() {
     {
       id: "2",
       name: "John"
+    },
+    {
+      id: "3",
+      name: "Ronaldo"
+    },
+    {
+      id: "4",
+      name: "Harry"
+    },
+    {
+      id: "5",
+      name: "Jamie"
     }
-  ]);
+  ])
 
   const sensors = [useSensor(PointerSensor)];
 
-  const handleDragEnd = (event) => {
-    const { active, over } = event;
-
+  const handleDragEnd = ({active, over}) => {
     if (active.id !== over.id) {
       setItems((items) => {
-        const oldIndex = items.findIndex(item => item.id === active.id);
-        const newIndex = items.findIndex(item => item.id === over.id);
-        
-        return arrayMove(items, oldIndex, newIndex);
-      });
+        const oldIndex = items.findIndex(item => item.id === active.id)
+        const newIndex = items.findIndex(item => item.id === over.id)
+
+        return arrayMove(items, oldIndex, newIndex)
+      })
     }
   }
-  
+
   return (
-    <div className="App">
+    <div
+      style={{
+        margin: 'auto',
+        width: 200,
+        textAlign: 'center'
+      }}
+    >
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
@@ -63,7 +58,9 @@ function App() {
           strategy={verticalListSortingStrategy}
         >
           {
-            items.map(item => <SortableComponent {...item} key={item.id} />)
+            items.map(
+              item => <UserComponent {...item} key={item.id} />
+            )
           }
         </SortableContext>
       </DndContext>
